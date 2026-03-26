@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Fitness Progress Tracker Deluxe</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Fitness Tracker" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -13,7 +19,10 @@
         <h1>Fitness Progress Tracker Deluxe</h1>
         <p>Mobile-First Tracker mit 50 Trainingskarten, Personen-Illustrationen, XP und kompakter Stoppuhr.</p>
       </div>
-      <div class="badge" id="headerBadge">Level 1</div>
+      <div class="header-actions">
+        <button class="secondary tiny-btn install-btn" id="installPwaBtn" type="button" hidden>App installieren</button>
+        <div class="badge" id="headerBadge">Level 1</div>
+      </div>
     </div>
 
     <section class="view active" id="view-training">

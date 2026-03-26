@@ -147,6 +147,7 @@ class App {
     this.timerStates = new Map();
     this.expandedExerciseIds = new Set();
     this.masterTimer = null;
+    this.deferredInstallPrompt = null;
     this.trainingPlanSelect = document.getElementById("trainingPlanSelect");
     this.newPlanName = document.getElementById("newPlanName");
     this.openCatalogBtn = document.getElementById("openCatalogBtn");
@@ -175,9 +176,16 @@ class App {
     this.selectedCount = document.getElementById("selectedCount");
     this.closeCatalogBtn = document.getElementById("closeCatalogBtn");
     this.applyCatalogBtn = document.getElementById("applyCatalogBtn");
+    this.installPwaBtn = document.getElementById("installPwaBtn");
   }
 
-  async init() { await this.db.init(); this.bindEvents(); this.masterTimer = setInterval(() => this.tickTimers(), 1000); await this.refreshAll(); }
+  async init() {
+    await this.db.init();
+    this.bindEvents();
+    this.registerServiceWorker();
+    this.masterTimer = setInterval(() => this.tickTimers(), 1000);
+    await this.refreshAll();
+  }
   bindEvents() {
     document.querySelectorAll(".nav-btn").forEach((btn) => btn.addEventListener("click", () => this.switchView(btn.dataset.view)));
     this.trainingPlanSelect.addEventListener("change", async (event) => { this.selectedPlanId = event.target.value ? Number(event.target.value) : null; await this.renderTrainingExercises(); });
@@ -189,6 +197,38 @@ class App {
     this.catalogSearch.addEventListener("input", () => { this.catalogSearchText = this.catalogSearch.value.trim().toLowerCase(); this.renderCatalogGrid(); });
     document.querySelectorAll("#catalogFilters .chip").forEach((chip) => chip.addEventListener("click", () => { this.catalogFilter = chip.dataset.filter; document.querySelectorAll("#catalogFilters .chip").forEach((item) => item.classList.remove("active")); chip.classList.add("active"); this.renderCatalogGrid(); }));
     this.catalogModal.addEventListener("click", (event) => { if (event.target === this.catalogModal) this.closeCatalogModal(); });
+    this.installPwaBtn?.addEventListener("click", async () => this.promptInstall());
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      this.deferredInstallPrompt = event;
+      if (this.installPwaBtn) this.installPwaBtn.hidden = false;
+    });
+    window.addEventListener("appinstalled", () => {
+      this.deferredInstallPrompt = null;
+      if (this.installPwaBtn) this.installPwaBtn.hidden = true;
+      this.showToast("App wurde installiert.");
+    });
+  }
+
+  registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) return;
+    window.addEventListener("load", async () => {
+      try {
+        await navigator.serviceWorker.register("service-worker.js");
+      } catch (error) {
+        console.warn("Service Worker konnte nicht registriert werden:", error);
+      }
+    });
+  }
+
+  async promptInstall() {
+    if (!this.deferredInstallPrompt) return;
+    this.deferredInstallPrompt.prompt();
+    const choice = await this.deferredInstallPrompt.userChoice;
+    if (choice?.outcome === "accepted" && this.installPwaBtn) {
+      this.installPwaBtn.hidden = true;
+    }
+    this.deferredInstallPrompt = null;
   }
 
   async refreshAll() { await this.renderPlanDropdowns(); this.renderDraftSelectionSummary(); this.renderCatalogGrid(); await this.renderPlansList(); await this.renderTrainingExercises(); await this.renderRecentLogs(); await this.renderProfile(); }
