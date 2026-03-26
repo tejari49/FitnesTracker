@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Fitness Tracker Maskable Icon">
+  <rect width="512" height="512" fill="#0b1220"/>
+  <g transform="translate(36,36)">
+    <rect width="440" height="440" rx="110" fill="#0ea5e9"/>
+    <rect x="72" y="208" width="296" height="30" rx="15" fill="#e2e8f0"/>
+    <rect x="28" y="184" width="36" height="78" rx="10" fill="#475569"/>
+    <rect x="-2" y="170" width="24" height="106" rx="8" fill="#1e293b"/>
+    <rect x="376" y="184" width="36" height="78" rx="10" fill="#475569"/>
+    <rect x="418" y="170" width="24" height="106" rx="8" fill="#1e293b"/>
+    <circle cx="220" cy="122" r="28" fill="#f8fafc"/>
+    <rect x="188" y="154" width="64" height="84" rx="18" fill="#0284c7"/>
+    <text x="220" y="364" text-anchor="middle" font-size="64" font-family="Arial, sans-serif" font-weight="700" fill="#e0f2fe">FT</text>
+  </g>
+</svg>
