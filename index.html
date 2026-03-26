@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Fitness Progress Tracker Deluxe</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title-wrap">
+        <h1>Fitness Progress Tracker Deluxe</h1>
+        <p>Mobile-First Tracker mit 50 Trainingskarten, Personen-Illustrationen, XP und kompakter Stoppuhr.</p>
+      </div>
+      <div class="badge" id="headerBadge">Level 1</div>
+    </div>
+
+    <section class="view active" id="view-training">
+      <div class="card stack">
+        <div>
+          <h2>Training loggen</h2>
+          <div class="subtle">Plan auswählen, Übung starten, Stoppuhr laufen lassen und pro Satz Gewicht, Wiederholungen oder Runden speichern.</div>
+        </div>
+        <div>
+          <label for="trainingPlanSelect">Heutiger Trainingsplan</label>
+          <select id="trainingPlanSelect"></select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Übungen & Geräte im aktuellen Plan</h3>
+        <div id="trainingExercises" class="stack"></div>
+      </div>
+
+      <div class="card">
+        <h3>Letzte Logs</h3>
+        <div id="recentLogs" class="log-list"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-plans">
+      <div class="card stack">
+        <div>
+          <h2>Neuen Plan erstellen</h2>
+          <div class="subtle">Zuerst Planname eingeben. Danach im Modal aus 50 Übungen und Trainingsgeräten auswählen. Anschließend den Plan speichern und später wieder abrufen.</div>
+        </div>
+        <div>
+          <label for="newPlanName">Planname</label>
+          <input id="newPlanName" type="text" placeholder="z. B. Push-Tag, Cardio Mix oder Beine" maxlength="80" />
+        </div>
+        <div class="inline-row">
+          <button id="openCatalogBtn" class="secondary" type="button">Übungen & Geräte auswählen</button>
+          <button id="clearDraftBtn" class="ghost" type="button">Auswahl leeren</button>
+        </div>
+        <div>
+          <label>Ausgewählte Elemente</label>
+          <div id="selectedDraftWrap" class="selected-wrap"></div>
+        </div>
+        <button id="savePlanBtn" type="button">Plan speichern</button>
+      </div>
+
+      <div class="card">
+        <h3>Gespeicherte Pläne</h3>
+        <div id="plansList" class="plan-list"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-profile">
+      <div class="card">
+        <h2>Profil & KPI</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Aktuelles Level</div><div class="stat-value" id="levelValue">1</div></div>
+          <div class="stat-card"><div class="stat-label">Gesamt-XP</div><div class="stat-value" id="xpValue">0</div></div>
+          <div class="stat-card"><div class="stat-label">Gespeicherte Pläne</div><div class="stat-value" id="planCountValue">0</div></div>
+          <div class="stat-card"><div class="stat-label">Gesamt-Sätze</div><div class="stat-value" id="setCountValue">0</div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span id="progressText">0 / 500 XP</span><span id="remainingText">500 XP bis Level 2</span></div>
+          <div class="progress"><div id="progressFill"></div></div>
+        </div>
+        <div class="muted-line" id="lastWorkoutInfo">Noch keine Workouts gespeichert.</div>
+      </div>
+
+      <div class="card">
+        <h3>Trainingsvolumen der letzten Workouts</h3>
+        <canvas id="volumeChart" width="400" height="240"></canvas>
+        <div class="chart-empty" id="chartEmpty">Noch nicht genügend Daten für das Diagramm.</div>
+      </div>
+    </section>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="training" type="button"><span class="icon">🏋️</span><span>Training</span></button>
+    <button class="nav-btn" data-view="plans" type="button"><span class="icon">📋</span><span>Pläne</span></button>
+    <button class="nav-btn" data-view="profile" type="button"><span class="icon">📈</span><span>Profil & KPI</span></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal" id="catalogModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-header stack">
+        <div>
+          <h3 style="margin:0;">Übungen & Geräte auswählen</h3>
+          <div class="subtle">50 Trainingskarten im 3D-Cartoon-Stil nach deiner Vorlage, mit Erklärung. Mehrfachauswahl möglich.</div>
+        </div>
+        <div>
+          <label for="catalogSearch">Suchen</label>
+          <input id="catalogSearch" type="text" placeholder="z. B. Laufband, Bankdrücken, Kurzhantel" />
+        </div>
+        <div class="chip-wrap" id="catalogFilters">
+          <span class="chip active" data-filter="all" role="button" tabindex="0">Alle</span>
+          <span class="chip" data-filter="Übung" role="button" tabindex="0">Übungen</span>
+          <span class="chip" data-filter="Gerät" role="button" tabindex="0">Geräte</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="inline-row" style="justify-content:space-between;">
+          <div class="subtle"><span id="catalogResultCount">0</span> Einträge sichtbar</div>
+          <div class="pill"><span id="selectedCount">0</span> ausgewählt</div>
+        </div>
+        <div id="catalogGrid" class="catalog-grid"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeCatalogBtn" class="secondary" type="button">Schließen</button>
+        <button id="applyCatalogBtn" type="button">Auswahl übernehmen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
